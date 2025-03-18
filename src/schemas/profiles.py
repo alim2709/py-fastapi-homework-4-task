@@ -3,7 +3,6 @@ from datetime import date
 from fastapi import UploadFile, Form, File, HTTPException
 from pydantic import BaseModel, field_validator, HttpUrl
 
-from database.models.accounts import GenderEnum
 from validation import (
     validate_name,
     validate_image,
@@ -132,25 +131,6 @@ class ProfileCreateRequestSchema(BaseModel):
                 ],
             )
         return cleaned_info
-
-    @field_validator("avatar")
-    @staticmethod
-    def validate_avatar(value: UploadFile) -> UploadFile:
-        try:
-            validate_image(value)
-            return value
-        except ValueError as e:
-            raise HTTPException(
-                status_code=422,
-                detail=[
-                    {
-                        "type": "value_error",
-                        "loc": ["avatar"],
-                        "msg": str(e),
-                        "input": value.filename,
-                    }
-                ],
-            )
 
 
 class ProfileResponseSchema(BaseModel):
